@@ -1,6 +1,6 @@
-import mongoose from "mongoose"
+import mongoose,{Schema} from "mongoose"
 
-const notificationSchema=new mongoose.Schema({
+const notificationSchema=new Schema({
     message:{
         type: String,
         required: true
@@ -17,11 +17,11 @@ const notificationSchema=new mongoose.Schema({
         default: Date.now
     },
     user:{
-        type:mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref:'User'
     },
     event:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Event'
     }
 },{timestamps: true})

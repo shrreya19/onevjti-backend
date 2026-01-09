@@ -1,8 +1,8 @@
-import mongoose from "mongoose"
+import mongoose, {Schema} from "mongoose"
 
-const eventRegistrationSchema=new mongoose.Schema({
+const eventRegistrationSchema=new Schema({
     user:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User'
     },
     registeredAt:{
@@ -10,7 +10,7 @@ const eventRegistrationSchema=new mongoose.Schema({
         default: Date.now
     },
     event:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Event'
     }
 },{timestamps: true})

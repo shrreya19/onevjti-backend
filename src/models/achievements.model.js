@@ -1,8 +1,8 @@
-import mongoose from "mongoose"
+import mongoose,{Schema} from "mongoose"
 
-const achievementSchema=new mongoose.Schema({
+const achievementSchema=new Schema({
     committee:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Committee'
     },
     title:{

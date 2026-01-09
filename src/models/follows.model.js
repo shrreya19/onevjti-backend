@@ -1,12 +1,12 @@
-import mongoose from "mongoose"
+import mongoose,{Schema} from "mongoose"
 
-const followsSchema=new mongoose.Schema({
+const followsSchema=new Schema({
     user:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User'
     },
     committee:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Committee'
     }
 },{timestamps: true})
