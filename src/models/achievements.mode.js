@@ -1,0 +1,24 @@
+import mongoose from "mongoose"
+
+const achievementSchema=new mongoose.Schema({
+    committee:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Committee'
+    },
+    title:{
+        type: String,
+        required: true
+    },
+    decription:{
+        type: String,
+        required: true
+    },
+    contestDate:{
+        type: Date
+    },
+    winners:{
+        type: String,
+    }
+},{timestamps: true})
+
+export const Achievement=mongoose.model('Achievement',achievementSchema)
