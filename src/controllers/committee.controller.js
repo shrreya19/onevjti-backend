@@ -22,6 +22,10 @@ const createCommittee = asyncHandler(async(req, res) => {
         throw new ApiError(404, "User not found")
     }
 
+    if (req.user.role !== "admin") {
+        throw new ApiError(403, "Unauthorized to create committee");
+    }
+
     const logoLocalPath = req.file?.path
     let logoUrl
 
@@ -77,21 +81,21 @@ const getAllCommittees = asyncHandler(async(req, res) => {
 const updateCommittee = asyncHandler(async(req, res) => {
     const {name, description, committeeId} = req.body
 
-    if(!name || !description) {
-        throw new ApiError(400, "All fields are required")
-    }
-
     if(!committeeId) {
         throw new ApiError(400, "Committee ID is required");
+    }
+
+    if (req.user.role !== "admin") {
+        throw new ApiError(403, "Unauthorized to create committee");
     }
 
     const logoLocalPath = req.file?.path
     let logoUrl
 
     if(logoLocalPath) {
-        const logo = await uploadOnCloudinary(newLogoLocalPath)
+        const logo = await uploadOnCloudinary(logoLocalPath)
 
-        if(!logo) {
+        if(!logo?.url) {
             throw new ApiError(400, "Logo upload failed")
         }
 
@@ -99,19 +103,25 @@ const updateCommittee = asyncHandler(async(req, res) => {
 
     }
 
-    const updateCommittee = await Committee.findByIdAndUpdate(
+    const updateData = {};
+
+    if (name) updateData.name = name;
+    if (description) updateData.description = description;
+    if (logoUrl) updateData.logo = logoUrl;
+
+    if (Object.keys(updateData).length === 0) {
+        throw new ApiError(400, "No fields provided for update");
+    }
+
+    const updatedCommittee = await Committee.findByIdAndUpdate(
         committeeId,
-        {
-            $set: {
-                name,
-                description,
-                logoUrl,
-            }
-        },
-        {
-            new: true
-        }
-    )
+        { $set: updateData },
+        { new: true }
+    );
+
+    if(!updateCommittee) {
+        throw new ApiError(404, "Committee not found.")
+    }
 
     return res.status(200).json(
         new ApiResponse(200, updatedCommittee, "Committee updated successfully")
