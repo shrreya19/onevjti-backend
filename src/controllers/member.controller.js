@@ -7,6 +7,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { Committee } from "../models/committee.model.js";
 import { User } from "../models/user.model.js";
+import mongoose from "mongoose"
 
 const createMember = asyncHandler(async(req,res) => {
 
@@ -90,7 +91,60 @@ const listCommitteeMembers = asyncHandler(async(req, res) => {
 
 })
 
+const removeMember = asyncHandler(async (req, res) => {
+    const { memberId } = req.params;
+
+    const requester = await Member.findOne({ user: req.user._id });
+
+    if (!requester) {
+        throw new ApiError(403, "Only committee members can remove members");
+    }
+
+    
+    if (requester.role !== "head") {
+        throw new ApiError(403, "Not authorized to remove members");
+    }
+
+    const targetMember = await Member.findById(memberId);
+
+    if (!targetMember) {
+        throw new ApiError(404, "Member does not exist");
+    }
+
+    if (
+        targetMember.committee.toString() !==
+        requester.committee.toString()
+    ) {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
+    if (
+        targetMember.user.toString() ===
+        req.user._id.toString()
+    ) {
+        throw new ApiError(400, "Head cannot remove themselves");
+    }
+
+    if (targetMember.role === "head") {
+        throw new ApiError(400, "Cannot remove committee head");
+    }
+
+    await Member.findByIdAndDelete(memberId);
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "Member removed successfully!"
+        )
+    );
+});
+
+
+
+
 export {
     createMember,
-    listCommitteeMembers
+    listCommitteeMembers,
+    removeMember
 }
