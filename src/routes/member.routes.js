@@ -3,7 +3,7 @@ import { createMember, listCommitteeMembers, removeMember, updateMemberRole } fr
 import {verifyJWT} from "../middlewares/auth.middleware.js"
 
 const router = Router()
-router.use(verifyJWT) // apply login to all who plays with events
+router.use(verifyJWT) 
 
 router.route("/").post(createMember)
 router.route("/").get(listCommitteeMembers)
